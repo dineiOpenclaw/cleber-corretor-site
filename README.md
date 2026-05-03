@@ -40,8 +40,8 @@ rodar script instalação:
 ./scripts/install-site.sh
 
 O instalador:
-- pergunta no terminal a URL pública do site (nomeDoSeuSite.com.br)
-- pergunta a URL da API do backend (dominio do painel: painel.seudominio.com.br)
+- pergunta no terminal a URL pública do site (https://nomeDoSeuSite.com.br)
+- pergunta a URL da API do backend (dominio do painel: https://painel.seudominio.com.br)
 - pergunta o nome do site (nome da marca, usado somente em arquivos de Log do sistema)
 - grava automaticamente `.site.env`
 - verifica e libera a porta `8081/tcp` no firewall quando houver `ufw` ou `firewalld`
@@ -71,8 +71,8 @@ Se o Nginx Proxy Manager estiver em Docker em outra VPS, diferente do site, use 
 
 O `site-server.js` expõe um arquivo virtual `config.js` com:
 
-- `window.CC_SITE_ORIGIN` (nomeDoSeuSite.com.br)
-- `window.CC_API_BASE`    (painel.seuDominio.com.br)
+- `window.CC_SITE_ORIGIN` (https://nomeDoSeuSite.com.br)
+- `window.CC_API_BASE`    (https://painel.seuDominio.com.br)
 - `window.CC_SITE_NAME`   (Sua marca)
 
 Assim o site pode trocar a base da API (dominio do painel corretor center) sem editar o HTML.
