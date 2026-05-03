@@ -2,61 +2,66 @@
 
 ## O que o site é
 
-O site é uma aplicação estática servida por um serviço leve em Node.js. Ele não tem instalador de banco nem painel próprio.
+O site é uma aplicação estática servida por um serviço leve em Node.js. Ele não tem banco próprio nem painel próprio.
 Ele consome apenas a API pública do CorretorCenter-mobile.
 
-## Estrutura do deploy
+## Ideia da instalação
 
-- **Site**: `imoveis.codeflowsoluctions.com`
-- **Porta do site**: `8081`
-- **API do projeto**: configurada via `CC_API_BASE`
-- **Nginx Proxy Manager**: aponta o subdomínio do site para o serviço na porta `8081`
+A instalação foi pensada para acontecer só pelo terminal, sem editar arquivo manualmente.
+O instalador pergunta os dados, grava a configuração e sobe o service sozinho.
 
-## Etapas
+## Fluxo recomendado
 
 ### 1) Preparar a VPS
-- Node.js 20+
-- Git
-- Nginx Proxy Manager já funcionando em Docker
+- instalar Node.js 20+
+- instalar Git
+- deixar o Nginx Proxy Manager já disponível, se o domínio for usar proxy
 
-### 2) Clonar o site
-Exemplo:
+### 2) Clonar o projeto
 
 ```bash
-git clone <repo-do-site>
+git clone https://github.com/dineiOpenclaw/cleber-corretor-site.git
 cd cleber-corretor-site
 ```
 
-### 3) Ajustar o serviço
-Usar o arquivo:
+### 3) Rodar o instalador do site
+
+```bash
+./scripts/install-site.sh
+```
+
+O instalador:
+- valida a sintaxe do servidor
+- pergunta a URL pública do site
+- pergunta a URL da API do backend
+- pergunta o nome do site
+- grava automaticamente `.site.env`
+- instala o service systemd
+- sobe o site na porta padrão `8081`
+- valida `/` e `/config.js`
+
+### 4) Arquivo de service
+
+O template fica em:
 
 - `deploy/cleber-corretor-site.service.example`
 
-Ele sobe o servidor leve do site na porta `8081`.
+Ele é usado pelo instalador e não precisa ser editado na mão.
 
-### 4) Subir o serviço
-Exemplo lógico:
+### 5) Validar
 
 ```bash
-sudo cp deploy/cleber-corretor-site.service.example /etc/systemd/system/cleber-corretor-site.service
-sudo systemctl daemon-reload
-sudo systemctl enable --now cleber-corretor-site
+curl http://127.0.0.1:8081/
+curl http://127.0.0.1:8081/config.js
 ```
 
-### 5) Configurar o proxy no NPM
-No Nginx Proxy Manager:
+### 6) Configurar o proxy no NPM
 
-- **Domínio**: `imoveis.codeflowsoluctions.com`
-- **Forward Hostname / IP**: `172.17.0.1`
-- **Forward Port**: `8081`
+Se o Nginx Proxy Manager estiver em Docker na mesma VPS:
 
-### 6) Validar
-- abrir `http://127.0.0.1:8081`
-- abrir `https://imoveis.codeflowsoluctions.com`
-- testar Home, Destaques e Imóvel
-- confirmar que os cards chamam `imovel.html?codigo=...`
-- confirmar que as buscas consultam a API pública do projeto
+- **Forward Hostname / IP:** `172.17.0.1`
+- **Forward Port:** `8081`
 
 ## Observação
 
-O arquivo `site-server.js` expõe também `config.js`, para permitir trocar a API sem editar o HTML.
+O `site-server.js` expõe também `config.js`, para permitir trocar a API sem editar o HTML.

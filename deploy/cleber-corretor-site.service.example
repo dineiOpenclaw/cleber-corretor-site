@@ -4,17 +4,13 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/home/ubuntu/cleber-corretor-site
-Environment=PORT=8081
-Environment=HOST=0.0.0.0
-Environment=CC_SITE_ORIGIN=https://imoveis.codeflowsoluctions.com
-Environment=CC_API_BASE=https://cadastro.codeflowsoluctions.com
-Environment=CC_SITE_NAME=Cléber Corretor
-ExecStart=/usr/bin/node /home/ubuntu/cleber-corretor-site/site-server.js
+WorkingDirectory=__WORKDIR__
+EnvironmentFile=__ENV_FILE__
+ExecStart=__NODE_BIN__ __WORKDIR__/site-server.js
 Restart=always
 RestartSec=5
-User=ubuntu
-Group=ubuntu
+User=__RUN_USER__
+Group=__RUN_GROUP__
 
 [Install]
 WantedBy=multi-user.target
