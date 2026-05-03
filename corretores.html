@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="assets/logo_site.png" />
+  <link rel="apple-touch-icon" href="assets/logo_site.png" />
+  <title>Cléber Corretor - Corretores</title>
+  <style>
+    :root{
+      --laranja:#F0C040;
+      --preto:#111111;
+      --texto:#222;
+      --borda:#e7e7e7;
+      --branco:#ffffff;
+      --fundo-escuro:#0c0c0c;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:Arial,Helvetica,sans-serif;color:var(--texto);background:var(--branco);line-height:1.5;}
+    a{text-decoration:none;color:inherit;}
+    .container{width:100%;max-width:1200px;margin:0 auto;padding:0 20px;}
+    header{background:var(--preto);color:#fff;border-bottom:4px solid var(--laranja);position:sticky;top:0;z-index:50;}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 0;flex-wrap:wrap;}
+    .brand{display:flex;align-items:center;gap:14px;min-width:240px;}
+    .logo-mark{width:66px;height:66px;flex:0 0 66px;display:block;object-fit:contain;}
+    .brand-copy{display:flex;flex-direction:column;gap:3px;}
+    .brand-copy strong,.brand-name{font-size:1.25rem;letter-spacing:.2px;line-height:1.1;color:var(--laranja);}
+    .brand-copy span{color:#fff;font-size:.88rem;opacity:.95;}
+    nav{display:flex;flex-wrap:wrap;gap:12px 18px;font-size:.98rem;opacity:.98;justify-content:center;}
+    nav a{padding:6px 0;position:relative;color:#fff;}
+    nav a:hover{color:var(--laranja);}
+    nav a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--laranja);transition:.2s ease;}
+    nav a:hover::after{width:100%;}
+    .section{padding:64px 0;}
+    .section-title{text-align:center;margin-bottom:28px;}
+    .section-title h1{font-size:2rem;color:var(--preto);margin-bottom:8px;}
+    .section-title p{color:#666;max-width:760px;margin:0 auto;}
+    .team-grid{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:20px;}
+    .team-card{border:1px solid var(--borda);border-radius:18px;background:#fff;box-shadow:0 10px 26px rgba(0,0,0,.06);overflow:hidden;display:flex;flex-direction:column;min-height:100%;position:relative;}
+    .team-photo{aspect-ratio:1 / 1;min-height:220px;background:linear-gradient(135deg, #f7f7f7, #ececec);display:flex;align-items:center;justify-content:center;color:#888;font-weight:700;font-size:1rem;position:relative;text-align:center;padding:18px;}
+    .team-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+    .team-photo span{background:rgba(255,255,255,.78);border:1px dashed #d8d8d8;padding:10px 14px;border-radius:999px;}
+    .team-body{padding:18px 18px 64px;display:flex;flex-direction:column;gap:8px;}
+    .team-whatsapp{position:absolute;right:14px;bottom:14px;z-index:2;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:52px;height:52px;padding:0 14px;border-radius:999px;background:#25d366;color:#fff;font-weight:800;text-decoration:none;box-shadow:0 10px 20px rgba(0,0,0,.18);border:2px solid rgba(255,255,255,.88);}
+    .team-whatsapp img{width:22px;height:22px;display:block;}
+    .team-whatsapp span{display:none;}
+    .team-name{font-size:1.12rem;color:var(--preto);font-weight:700;line-height:1.25;}
+    .team-role{color:var(--laranja);font-weight:700;font-size:.92rem;}
+    .team-phone{color:#555;font-size:.96rem;}
+    .team-empty{grid-column:1 / -1;text-align:center;padding:26px 18px;border:1px dashed var(--borda);border-radius:18px;background:#fff;color:#666;}
+    .team-section-actions{display:flex;justify-content:center;margin-top:28px;}
+    .btn-dark{background:var(--preto);color:#fff;padding:12px 18px;border-radius:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;min-width:220px;}
+    footer{background:var(--preto);color:#ddd;padding:22px 0 18px;margin-top:0;}
+    .footer-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:22px;align-items:stretch;}
+    .footer-col{display:flex;flex-direction:column;justify-content:flex-end;gap:10px;}
+    .footer-col:first-child{padding-left:90px;padding-bottom:18px;}
+    .footer-col:last-child{padding-bottom:18px;}
+    .footer-title{font-size:1rem;color:#fff;margin-bottom:6px;font-weight:700;}
+    .social-list,.contact-list{display:flex;flex-direction:column;gap:8px;}
+    .social-list a{color:#ddd;}
+    .social-list a:hover{color:var(--laranja);}
+    .contact-list span{display:block;}
+    .copyright{margin-top:8px;color:#bdbdbd;font-size:.92rem;}
+    .floating-whats{position:fixed;right:18px;bottom:18px;z-index:80;background:transparent;color:#fff;font-weight:700;padding:0;border-radius:999px;box-shadow:0 16px 30px rgba(0,0,0,.22);border:2px solid rgba(255,255,255,.24);}
+    .floating-whats img{display:block;width:76px;height:76px;border-radius:50%;}
+    .floating-whats:hover{filter:brightness(.96);}
+    @media (max-width: 1024px){
+      .team-grid{grid-template-columns:1fr 1fr;}
+      .footer-grid{grid-template-columns:1fr;}
+    }
+    @media (max-width: 760px){
+      .team-grid{grid-template-columns:1fr;}
+      .section{padding:54px 0;}
+      .team-section-actions{margin-top:22px;}
+      .floating-whats{right:14px;bottom:14px;padding:13px 16px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container topbar">
+      <a href="index.html#inicio" class="brand" aria-label="Cléber Corretor">
+        <img class="logo-mark" src="assets/logo_site.png" alt="Logo Cléber Corretor" />
+        <div class="brand-copy">
+          <strong class="brand-name">Cléber Corretor</strong>
+          <span>O imóvel dos seus sonhos esta aqui!</span>
+        </div>
+      </a>
+
+      <nav aria-label="Menu principal">
+        <a href="index.html#inicio">Início</a>
+        <a href="index.html#sobre">Sobre</a>
+        <a href="index.html#contato">Contato</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="section-title">
+          <h1>Corretores</h1>
+          <p>Nossa equipe de colaboradores</p>
+        </div>
+        <div class="team-grid" id="teamGrid">
+          <div class="team-empty">Carregando corretores...</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <div class="footer-title">Mídias sociais</div>
+        <div class="social-list">
+          <a href="https://www.facebook.com/marketplace/profile/100049375820904/?ref=permalink&mibextid=dXMIcH" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;">Facebook</a>
+          <a href="https://www.instagram.com/clebercorretor080979?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;">Instagram</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-title">Informações</div>
+        <div class="contact-list">
+          <span><strong>Endereço:</strong> Rua Professora Nair Pedrolina Martin, 56, Bairro Horizonte, Sapiranga</span>
+          <span><strong>Contato:</strong> (51) 99543-4370</span>
+          <span><strong>Copyright:</strong> © 2026 Cléber Corretor. Todos os direitos reservados.</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <a class="floating-whats" href="https://wa.me/5551995434370" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <img src="assets/whatsapp.png" alt="WhatsApp" />
+  </a>
+
+  <script src="config.js"></script>
+  <script>
+    const API_BASE = window.CC_API_BASE || window.API_BASE || 'https://cadastro.codeflowsoluctions.com';
+    const teamGrid = document.getElementById('teamGrid');
+
+    function esc(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function phoneText(value) {
+      const digits = String(value ?? '').replace(/\D/g, '');
+      if (!digits) return '-';
+      if (digits.length === 11) return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+      if (digits.length === 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+      return digits;
+    }
+
+    function whatsappLink(value) {
+      const digits = String(value ?? '').replace(/\D/g, '');
+      if (!digits) return '';
+      const normalized = digits.startsWith('55') ? digits : `55${digits}`;
+      return `https://wa.me/${normalized}`;
+    }
+
+    async function apiGet(path) {
+      const response = await fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error(`Falha ao consultar ${path} (${response.status})`);
+      return response.json();
+    }
+
+    function teamMemberHtml(item) {
+      const nome = [item.nome, item.sobrenome].filter(Boolean).join(' ').trim() || 'Corretor';
+      const cargo = item.cargo_nome || item.cargo || 'Corretor';
+      const telefone = phoneText(item.telefone);
+      const initial = esc((item.nome || 'C').trim().charAt(0).toUpperCase() || 'C');
+      const foto = item.foto_url || '';
+      const whatsapp = whatsappLink(item.telefone);
+      return `
+        <article class="team-card">
+          <div class="team-photo" aria-label="Foto do corretor">
+            ${foto ? `<img src="${esc(foto)}" alt="Foto de ${esc(nome)}" loading="lazy">` : `<span>${initial}<br />Foto em breve</span>`}
+          </div>
+          <div class="team-body">
+            <div class="team-name">${esc(nome)}</div>
+            <div class="team-role">${esc(cargo)}</div>
+            <div class="team-phone">${esc(telefone)}</div>
+          </div>
+          ${whatsapp ? `<a class="team-whatsapp" href="${esc(whatsapp)}" target="_blank" rel="noopener" aria-label="Falar com ${esc(nome)} no WhatsApp"><img src="assets/whatsapp.png" alt="" aria-hidden="true"><span>WhatsApp</span></a>` : ''}
+        </article>
+      `;
+    }
+
+    function emptyHtml() {
+      return '<div class="team-empty">Nenhum corretor selecionado para aparecer no site.</div>';
+    }
+
+    async function loadTeam() {
+      if (!teamGrid) return;
+      try {
+        const data = await apiGet('/api/public/funcionarios');
+        const items = Array.isArray(data.items) ? data.items : [];
+        teamGrid.innerHTML = items.length ? items.map(teamMemberHtml).join('') : emptyHtml();
+      } catch (error) {
+        teamGrid.innerHTML = '<div class="team-empty">Não foi possível carregar os corretores agora.</div>';
+      }
+    }
+
+    loadTeam();
+  </script>
+</body>
+</html>

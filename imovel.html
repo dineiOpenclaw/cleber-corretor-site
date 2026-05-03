@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="assets/logo_site.png" />
+  <link rel="apple-touch-icon" href="assets/logo_site.png" />
+  <title>Cléber Corretor | Imóvel</title>
+  <style>
+    :root{
+      --laranja:#F0C040;
+      --preto:#111111;
+      --preto-2:#1b1b1b;
+      --cinza:#f6f6f6;
+      --texto:#222;
+      --borda:#e7e7e7;
+      --branco:#ffffff;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:Arial,Helvetica,sans-serif;color:var(--texto);background:#fff;line-height:1.5;}
+    a{text-decoration:none;color:inherit;}
+    .container{width:100%;max-width:1200px;margin:0 auto;padding:0 20px;}
+    header{background:var(--preto);color:#fff;border-bottom:4px solid var(--laranja);position:sticky;top:0;z-index:50;}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 0;flex-wrap:wrap;}
+    .brand{display:flex;align-items:center;gap:14px;min-width:240px;}
+    .logo-mark{width:66px;height:66px;flex:0 0 66px;display:block;object-fit:contain;}
+    .brand-copy{display:flex;flex-direction:column;gap:3px;}
+    .brand-copy strong,.brand-name{font-size:1.25rem;line-height:1.1;color:var(--laranja);}
+    .brand-copy span{color:#fff;font-size:.88rem;opacity:.95;}
+    nav{display:flex;flex-wrap:wrap;gap:12px 18px;font-size:.98rem;justify-content:center;}
+    nav a{padding:6px 0;position:relative;color:#fff;}
+    nav a:hover{color:var(--laranja);}
+    nav a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--laranja);transition:.2s ease;}
+    nav a:hover::after{width:100%;}
+    .page-hero{background:linear-gradient(rgba(12,12,12,.86), rgba(12,12,12,.86)), url("https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=80");background-size:cover;background-position:center;color:#fff;padding:44px 0;}
+    .page-hero h1{font-size:2.15rem;line-height:1.1;margin-bottom:10px;}
+    .page-hero p{max-width:820px;color:rgba(255,255,255,.88);}
+    .section{padding:42px 0;}
+    .gallery-shell{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.95fr);gap:22px;align-items:start;}
+    .gallery-column{display:flex;flex-direction:column;gap:22px;}
+    .gallery-main{position:relative;border:1px solid var(--borda);border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 14px 32px rgba(0,0,0,.07);}
+    .gallery-main img{width:100%;height:460px;object-fit:cover;display:block;background:#111;cursor:zoom-in;}
+    .gallery-controls{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;pointer-events:none;padding:0 12px;}
+    .gallery-arrow{pointer-events:auto;width:46px;height:46px;border:none;border-radius:999px;background:rgba(17,17,17,.62);color:#fff;font-size:1.5rem;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px);transition:.2s ease;}
+    .gallery-arrow:hover{background:rgba(17,17,17,.82);transform:scale(1.04);}
+    .gallery-arrow:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+    .gallery-counter{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(17,17,17,.72);color:#fff;font-size:.82rem;font-weight:700;padding:6px 10px;border-radius:999px;pointer-events:none;}
+    .detail-card{border:1px solid var(--borda);border-radius:18px;background:#fff;box-shadow:0 12px 28px rgba(0,0,0,.06);padding:20px;}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;background:rgba(232,146,32,.12);color:var(--laranja);font-weight:700;font-size:.84rem;margin-bottom:12px;}
+    .detail-card h2{font-size:1.6rem;color:var(--preto);margin-bottom:8px;}
+    .location{color:#666;margin-bottom:12px;}
+    .price{color:var(--laranja);font-weight:700;font-size:1.6rem;margin-bottom:14px;}
+    .specs{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:10px;margin:18px 0;}
+    .spec{background:var(--cinza);border:1px solid var(--borda);border-radius:14px;padding:12px;}
+    .spec strong{display:block;font-size:.78rem;color:#6b7280;margin-bottom:5px;text-transform:uppercase;letter-spacing:.02em;}
+    .spec span{font-size:.98rem;color:var(--preto);font-weight:700;}
+    .features-text{margin:14px 0 18px;color:var(--preto);font-weight:500;font-size:1rem;line-height:1.6;}
+    .features-text strong{font-weight:700;}
+    .area-text{margin-top:10px;color:var(--preto);font-weight:500;font-size:1rem;line-height:1.6;}
+    .area-text strong{font-weight:700;}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;}
+    .btn-dark,.btn-light,.btn-outline{padding:11px 14px;border-radius:10px;font-weight:700;font-size:.92rem;display:inline-flex;align-items:center;justify-content:center;}
+    .btn-dark{background:var(--preto);color:#fff;}
+    .btn-light{background:#fff;color:var(--preto);border:1px solid var(--borda);}
+    .btn-outline{border:1px solid var(--laranja);color:var(--laranja);background:#fff;}
+    .content-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);gap:22px;align-items:start;}
+    .panel{border:1px solid var(--borda);border-radius:18px;background:#fff;box-shadow:0 12px 26px rgba(0,0,0,.05);padding:20px;}
+    .panel h3{font-size:1.2rem;color:var(--preto);margin-bottom:12px;}
+    .panel p{color:#555;white-space:pre-line;}
+    .description-panel{width:100%;}
+    .grid-info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+    .info-box{background:var(--cinza);border:1px solid var(--borda);border-radius:14px;padding:12px;}
+    .info-box strong{display:block;font-size:.78rem;color:#6b7280;margin-bottom:5px;text-transform:uppercase;}
+    .info-box span{color:var(--preto);font-weight:700;}
+    .empty-state{border:1px dashed var(--borda);border-radius:16px;padding:20px;background:#fff;color:#666;text-align:center;}
+    .loading-state{border:1px solid var(--borda);border-radius:16px;padding:20px;background:#fff;color:#666;text-align:center;}
+    .message-box{border:1px solid var(--borda);border-radius:18px;background:#fff;box-shadow:0 12px 26px rgba(0,0,0,.05);padding:22px;}
+    .lightbox{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;padding:24px;}
+    .lightbox.open{display:flex;}
+    .lightbox-inner{position:relative;max-width:min(96vw,1300px);max-height:94vh;}
+    .lightbox-img{display:block;max-width:100%;max-height:94vh;object-fit:contain;border-radius:14px;box-shadow:0 22px 60px rgba(0,0,0,.35);}
+    .lightbox-close{position:absolute;top:-14px;right:-14px;width:40px;height:40px;border:none;border-radius:999px;background:#fff;color:#111;font-size:1.2rem;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.28);}
+    footer{background:var(--preto);color:#ddd;padding:22px 0 18px;margin-top:0;}
+    .footer-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:22px;align-items:stretch;}
+    .footer-col{display:flex;flex-direction:column;justify-content:flex-end;gap:10px;}
+    .footer-col:first-child{padding-left:90px;padding-bottom:18px;}
+    .footer-col:last-child{padding-bottom:18px;}
+    .footer-title{font-size:1rem;color:#fff;margin-bottom:6px;font-weight:700;}
+    .social-list,.contact-list{display:flex;flex-direction:column;gap:8px;}
+    .social-list a{color:#ddd;}
+    .social-list a:hover{color:var(--laranja);}
+    .contact-list span{display:block;}
+    .floating-whats{position:fixed;right:18px;bottom:18px;z-index:80;background:transparent;color:#fff;font-weight:700;padding:0;border-radius:999px;box-shadow:0 16px 30px rgba(0,0,0,.22);border:2px solid rgba(255,255,255,.24);}
+    .floating-whats img{display:block;width:76px;height:76px;border-radius:50%;}
+    .floating-whats:hover{filter:brightness(.96);}
+    @media (max-width: 1024px){
+      .gallery-shell,.content-grid,.footer-grid{grid-template-columns:1fr;}
+      .footer-col:first-child{padding-left:0;}
+    }
+    @media (max-width: 720px){
+      .topbar{flex-direction:column;align-items:flex-start;}
+      nav{justify-content:flex-start;gap:10px 14px;}
+      .page-hero{padding:36px 0;}
+      .page-hero h1{font-size:1.85rem;}
+      .gallery-main img{height:320px;}
+      .specs,.grid-info{grid-template-columns:1fr;}
+      .floating-whats{right:14px;bottom:14px;padding:13px 16px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container topbar">
+      <a href="index.html#inicio" class="brand" aria-label="Cléber Corretor">
+        <img class="logo-mark" src="assets/logo_site.png" alt="Logo Cléber Corretor" />
+        <div class="brand-copy">
+          <strong class="brand-name">Cléber Corretor</strong>
+          <span>O imóvel dos seus sonhos esta aqui!</span>
+        </div>
+      </a>
+
+      <nav aria-label="Menu principal">
+        <a href="index.html#inicio">Início</a>
+        <a href="index.html#sobre">Sobre</a>
+        <a href="index.html#contato">Contato</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <h1 id="pageTitle">Carregando imóvel...</h1>
+        <p id="pageSubtitle">Buscando os dados direto da base do projeto.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container" id="pageContent">
+        <div class="loading-state">Carregando detalhes do imóvel...</div>
+      </div>
+    </section>
+  </main>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox-inner" role="dialog" aria-modal="true" aria-label="Imagem ampliada">
+      <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Fechar imagem ampliada">×</button>
+      <img class="lightbox-img" id="lightboxImg" alt="Imagem ampliada do imóvel">
+    </div>
+  </div>
+
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <div class="footer-title">Mídias sociais</div>
+        <div class="social-list">
+          <a href="https://www.facebook.com/marketplace/profile/100049375820904/?ref=permalink&mibextid=dXMIcH" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;">Facebook</a>
+          <a href="https://www.instagram.com/clebercorretor080979?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;">Instagram</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-title">Informações</div>
+        <div class="contact-list">
+          <span><strong>Endereço:</strong> Rua Professora Nair Pedrolina Martin, 56, Bairro Horizonte, Sapiranga</span>
+          <span><strong>Contato:</strong> (51) 99543-4370</span>
+          <span><strong>Copyright:</strong> © 2026 Cléber Corretor. Todos os direitos reservados.</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <a class="floating-whats" href="https://wa.me/5551995434370" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <img src="assets/whatsapp.png" alt="WhatsApp" />
+  </a>
+
+  <script src="config.js"></script>
+
+  <script>
+    (() => {
+      const API_BASE = window.CC_API_BASE || 'https://cadastro.codeflowsoluctions.com';
+      const pageTitle = document.getElementById('pageTitle');
+      const pageSubtitle = document.getElementById('pageSubtitle');
+      const pageContent = document.getElementById('pageContent');
+
+      function esc(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function money(value) {
+        const number = Number(value);
+        if (!Number.isFinite(number)) return 'Sob consulta';
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(number);
+      }
+
+      function specValue(item) {
+        const parts = [];
+        if (item.numero_dormitorios) parts.push(`${item.numero_dormitorios} quartos`);
+        if (item.numero_banheiros) parts.push(`${item.numero_banheiros} banheiros`);
+        if (item.numero_suites) parts.push(`${item.numero_suites} suítes`);
+        if (item.numero_vagas_garagem) parts.push(`${item.numero_vagas_garagem} vagas`);
+        return parts.length ? parts.join(' • ') : 'Informações sob consulta';
+      }
+
+      function floorText(item) {
+        const raw = item.numero_andares ?? item.quantidade_andares ?? item.numero_pavimentos ?? item.quantidade_pavimentos ?? item.qtd_andares ?? item.andares ?? item.andar;
+        const value = String(raw ?? '').trim();
+        if (!value) return '';
+        if (/^\d+(?:[.,]\d+)?$/.test(value)) {
+          const numeric = Number(value.replace(',', '.'));
+          if (Number.isFinite(numeric)) {
+            return `${numeric} ${numeric === 1 ? 'andar' : 'andares'}`;
+          }
+        }
+        return value;
+      }
+
+      function featureLine(item) {
+        const chips = [];
+        if (item.numero_dormitorios !== undefined && item.numero_dormitorios !== null && String(item.numero_dormitorios).trim() !== '') {
+          chips.push(`${item.numero_dormitorios} quartos`);
+        }
+        if (item.numero_banheiros !== undefined && item.numero_banheiros !== null && String(item.numero_banheiros).trim() !== '') {
+          chips.push(`${item.numero_banheiros} banheiros`);
+        }
+        if (item.numero_suites !== undefined && item.numero_suites !== null && String(item.numero_suites).trim() !== '') {
+          chips.push(`${item.numero_suites} suítes`);
+        }
+        if (item.numero_vagas_garagem !== undefined && item.numero_vagas_garagem !== null && String(item.numero_vagas_garagem).trim() !== '') {
+          chips.push(`${item.numero_vagas_garagem} vagas`);
+        }
+        const andar = floorText(item);
+        if (andar) chips.push(andar);
+        return chips.length ? chips.join(' • ') : 'Informações sob consulta';
+      }
+
+      function apiGet(path) {
+        return fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' } })
+          .then((response) => {
+            if (!response.ok) throw new Error(`Falha ao consultar ${path} (${response.status})`);
+            return response.json();
+          });
+      }
+
+      function resolveImageUrl(value) {
+        const texto = String(value || '').trim();
+        if (!texto) return '';
+        if (/^https?:\/\//i.test(texto)) return texto;
+        try {
+          return new URL(texto, API_BASE).toString();
+        } catch {
+          return texto.startsWith('/') ? `${API_BASE}${texto}` : `${API_BASE}/${texto}`;
+        }
+      }
+
+      function areaText(areaTotal, areaConstruida) {
+        const parts = [];
+        if (areaTotal !== undefined && areaTotal !== null && String(areaTotal).trim() !== '') {
+          parts.push(`Área total: ${areaTotal} m²`);
+        }
+        if (areaConstruida !== undefined && areaConstruida !== null && String(areaConstruida).trim() !== '') {
+          parts.push(`Área construída: ${areaConstruida} m²`);
+        }
+        return parts.length ? parts.join(' • ') : 'Área sob consulta';
+      }
+
+      function galleryHtml(photos, titulo) {
+        const list = Array.isArray(photos) ? photos : [];
+        if (!list.length) {
+          return '<div class="empty-state">Nenhuma imagem cadastrada para este imóvel.</div>';
+        }
+        const mainImage = list[0]?.url || '';
+        return `
+          <div class="gallery-main">
+            <img id="galleryMainImage" src="${esc(mainImage)}" alt="${esc(titulo)}">
+            <div class="gallery-controls">
+              <button type="button" class="gallery-arrow" id="galleryPrev" aria-label="Imagem anterior">‹</button>
+              <button type="button" class="gallery-arrow" id="galleryNext" aria-label="Próxima imagem">›</button>
+            </div>
+            <div class="gallery-counter" id="galleryCounter">1 / ${list.length}</div>
+          </div>
+        `;
+      }
+
+      function detailCards(item) {
+        return `
+          <div class="specs">
+            <div class="spec"><strong>Código</strong><span>${esc(item.codigo || '-')}</span></div>
+            <div class="spec"><strong>Categoria</strong><span>${esc(item.categoria_nome || item.categoria_slug || '-')}</span></div>
+            <div class="spec"><strong>Cidade</strong><span>${esc(item.cidade || '-')}</span></div>
+            <div class="spec"><strong>Bairro</strong><span>${esc(item.bairro || '-')}</span></div>
+            <div class="spec"><strong>Estado</strong><span>${esc(item.estado_imovel || '-')}</span></div>
+            <div class="spec"><strong>Área total</strong><span>${item.area_total_m2 ? `${esc(item.area_total_m2)} m²` : '-'}</span></div>
+            <div class="spec"><strong>Área construída</strong><span>${item.area_construida_m2 ? `${esc(item.area_construida_m2)} m²` : '-'}</span></div>
+            <div class="spec"><strong>Andar</strong><span>${item.andar || '-'}</span></div>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn-outline js-back-results">Voltar aos resultados</button>
+          </div>
+        `;
+      }
+
+      function infoGrid(item) {
+        return `
+          <div class="grid-info">
+            <div class="info-box"><strong>Dormitórios</strong><span>${item.numero_dormitorios ?? '-'}</span></div>
+            <div class="info-box"><strong>Banheiros</strong><span>${item.numero_banheiros ?? '-'}</span></div>
+            <div class="info-box"><strong>Suítes</strong><span>${item.numero_suites ?? '-'}</span></div>
+            <div class="info-box"><strong>Vagas</strong><span>${item.numero_vagas_garagem ?? '-'}</span></div>
+            <div class="info-box"><strong>Posição solar</strong><span>${esc(item.posicao_solar || '-')}</span></div>
+            <div class="info-box"><strong>UF</strong><span>${esc(item.uf || '-')}</span></div>
+            <div class="info-box"><strong>CEP</strong><span>${esc(item.cep || '-')}</span></div>
+            <div class="info-box"><strong>Endereço</strong><span>${esc(item.endereco_completo || '-')}</span></div>
+          </div>
+        `;
+      }
+
+      function render(item) {
+        const title = item.titulo || item.codigo || 'Imóvel';
+        const type = item.categoria_nome || item.categoria_slug || 'Imóvel';
+        const state = item.estado_imovel || '-';
+        const codigo = item.codigo || '-';
+        const location = [item.cidade, item.bairro].filter(Boolean).join(' • ') || 'Localização não informada';
+        const features = specValue(item);
+        const areaTotal = item.area_total_m2 ? esc(item.area_total_m2) : '-';
+        const areaConstruida = item.area_construida_m2 ? esc(item.area_construida_m2) : '-';
+        const photos = (Array.isArray(item.fotos) ? item.fotos : [])
+          .map((foto) => ({
+            ...foto,
+            url: resolveImageUrl(foto.url || foto.url_publica || ''),
+          }))
+          .filter((foto) => Boolean(foto.url));
+        pageTitle.textContent = title;
+        pageSubtitle.textContent = `${location} • ${money(item.valor)}`;
+        pageContent.innerHTML = `
+          <div class="gallery-shell">
+            <div class="gallery-column">
+              <div class="gallery-main-wrap">
+                ${galleryHtml(photos, title)}
+              </div>
+              <section class="panel description-panel">
+                <h3>Descrição</h3>
+                <p>${esc(item.descricao || 'Sem descrição cadastrada para este imóvel.')}</p>
+              </section>
+            </div>
+            <div class="detail-card">
+              <div class="badge">${esc(type)} • ${esc(state)} • ${esc(codigo)}</div>
+              <h2>${esc(title)}</h2>
+              <div class="location">${esc(location)}</div>
+              <div class="price">${money(item.valor)}</div>
+              <div class="features-text">${esc(featureLine(item))}</div>
+              <div class="area-text">${esc(areaText(areaTotal, areaConstruida))}</div>
+              <div class="actions">
+                <button type="button" class="btn-outline js-back-results">Voltar aos resultados</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        const backButtons = pageContent.querySelectorAll('.js-back-results');
+        backButtons.forEach((button) => {
+          button.addEventListener('click', () => {
+            if (window.history.length > 1) {
+              history.back();
+              return;
+            }
+            window.location.href = 'index.html#resultados-busca';
+          });
+        });
+
+        const galleryMain = document.getElementById('galleryMainImage');
+        const galleryPrev = document.getElementById('galleryPrev');
+        const galleryNext = document.getElementById('galleryNext');
+        const galleryCounter = document.getElementById('galleryCounter');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxClose = document.getElementById('lightboxClose');
+        if (galleryMain && galleryPrev && galleryNext && galleryCounter && photos.length) {
+          let currentIndex = 0;
+          const updateGallery = () => {
+            const current = photos[currentIndex];
+            galleryMain.src = current.url;
+            galleryMain.alt = `${title} - imagem ${currentIndex + 1}`;
+            galleryCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
+            galleryPrev.disabled = photos.length < 2;
+            galleryNext.disabled = photos.length < 2;
+          };
+          const openLightbox = () => {
+            if (!lightbox || !lightboxImg) return;
+            const current = photos[currentIndex];
+            lightboxImg.src = current.url;
+            lightboxImg.alt = `${title} - imagem ampliada ${currentIndex + 1}`;
+            lightbox.classList.add('open');
+            lightbox.setAttribute('aria-hidden', 'false');
+          };
+          const closeLightbox = () => {
+            if (!lightbox) return;
+            lightbox.classList.remove('open');
+            lightbox.setAttribute('aria-hidden', 'true');
+          };
+          galleryPrev.addEventListener('click', () => {
+            if (!photos.length) return;
+            currentIndex = (currentIndex - 1 + photos.length) % photos.length;
+            updateGallery();
+          });
+          galleryNext.addEventListener('click', () => {
+            if (!photos.length) return;
+            currentIndex = (currentIndex + 1) % photos.length;
+            updateGallery();
+          });
+          galleryMain.addEventListener('click', openLightbox);
+          if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+          if (lightbox) {
+            lightbox.addEventListener('click', (event) => {
+              if (event.target === lightbox) closeLightbox();
+            });
+          }
+          document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') closeLightbox();
+          });
+          updateGallery();
+        }
+      }
+
+      async function init() {
+        const params = new URLSearchParams(window.location.search);
+        const codigo = params.get('codigo') || '';
+        if (!codigo) {
+          pageTitle.textContent = 'Imóvel não informado';
+          pageSubtitle.textContent = 'Faltou o código do imóvel na URL.';
+          pageContent.innerHTML = '<div class="message-box">Código do imóvel ausente.</div>';
+          return;
+        }
+        try {
+          const data = await apiGet(`/api/public/imoveis/${encodeURIComponent(codigo)}`);
+          if (!data.item) throw new Error('Imóvel não encontrado.');
+          render(data.item);
+        } catch (error) {
+          console.error(error);
+          pageTitle.textContent = 'Imóvel indisponível';
+          pageSubtitle.textContent = 'Não foi possível carregar este imóvel agora.';
+          pageContent.innerHTML = `<div class="message-box">${esc(error.message || 'Erro ao carregar o imóvel.')}</div>`;
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>

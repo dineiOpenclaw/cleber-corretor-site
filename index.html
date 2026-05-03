@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="assets/logo_site.png" />
+  <link rel="apple-touch-icon" href="assets/logo_site.png" />
+  <title>Cléber Corretor</title>
+  <style>
+    :root{
+      --laranja:#F0C040;
+      --preto:#111111;
+      --preto-2:#1b1b1b;
+      --cinza:#f6f6f6;
+      --texto:#222;
+      --borda:#e7e7e7;
+      --branco:#ffffff;
+      --fundo-escuro:#0c0c0c;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:Arial,Helvetica,sans-serif;color:var(--texto);background:var(--branco);line-height:1.5;}
+    a{text-decoration:none;color:inherit;}
+    button, summary{font-family:inherit;}
+    .container{width:100%;max-width:1200px;margin:0 auto;padding:0 20px;}
+
+    header{background:var(--preto);color:#fff;border-bottom:4px solid var(--laranja);position:sticky;top:0;z-index:50;}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 0;flex-wrap:wrap;}
+    .brand{display:flex;align-items:center;gap:14px;min-width:240px;}
+    .logo-mark{width:66px;height:66px;flex:0 0 66px;display:block;object-fit:contain;}
+    .brand-copy{display:flex;flex-direction:column;gap:3px;}
+    .brand-copy strong,.brand-name{font-size:1.25rem;letter-spacing:.2px;line-height:1.1;color:var(--laranja);}
+    .brand-copy span{color:#fff;font-size:.88rem;opacity:.95;}
+    nav{display:flex;flex-wrap:wrap;gap:12px 18px;font-size:.98rem;opacity:.98;justify-content:center;}
+    nav a{padding:6px 0;position:relative;color:#fff;}
+    nav a:hover{color:var(--laranja);}
+    nav a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--laranja);transition:.2s ease;}
+    nav a:hover::after{width:100%;}
+
+    .hero{
+      background:linear-gradient(rgba(12,12,12,.55), rgba(12,12,12,.55)),
+      url("assets/banner-home.webp");
+      background-size:cover;background-position:center;color:#fff;padding:50px 0 34px;
+    }
+    .hero-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:center;}
+    .hero-copy{text-align:center;max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:16px;align-items:center;}
+    .hero h1{font-size:2.55rem;line-height:1.05;max-width:980px;margin-top:0;}
+    .search-card{
+      width:min(100%, 980px);
+      background:#fff;color:var(--texto);border-radius:14px;padding:14px;
+      box-shadow:0 20px 44px rgba(0,0,0,.24);border:1px solid rgba(255,255,255,.12);
+      margin-top:0;
+    }
+    .search-card h2{font-size:1.08rem;margin-bottom:10px;color:var(--preto);text-align:left;}
+    .search-form{display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:6px 12px;align-items:start;}
+    .search-field{display:flex;flex-direction:column;gap:4px;}
+    .search-field label{font-size:.82rem;color:#444;font-weight:700;text-align:left;}
+    .search-form input,.search-form select{
+      width:100%;padding:10px 12px;border:1px solid var(--borda);border-radius:10px;outline:none;background:#fff;font-size:.93rem;
+      min-height:40px;
+    }
+    .search-form input[type="number"]{appearance:textfield;}
+    .search-form input[type="number"]::-webkit-outer-spin-button,
+    .search-form input[type="number"]::-webkit-inner-spin-button{appearance:none;margin:0;}
+    .search-form .full{grid-column:1 / -1;}
+    .search-form .wide-2{grid-column:span 2;}
+    .price-range-box{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:8px 10px;border:1px solid var(--borda);border-radius:10px;background:#fff;}
+    .price-range-field{display:flex;flex-direction:column;gap:4px;}
+    .price-range-field label{font-size:.8rem;color:#444;font-weight:700;}
+    .price-range-field input{
+      width:100%;padding:10px 12px;border:1px solid var(--borda);border-radius:10px;outline:none;background:#fff;font-size:.93rem;
+      min-height:40px;
+    }
+    .search-form .search-field:nth-of-type(n+6){gap:3px;}
+    .search-form .search-field:nth-of-type(n+6) label{font-size:.8rem;}
+    .search-form .search-field:nth-of-type(n+6) input{
+      min-height:38px;padding:9px 10px;font-size:.92rem;
+    }
+    .search-form-actions{
+      grid-column:1 / -1;
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      align-items:center;
+      margin-top:4px;
+    }
+    .search-form-actions button{
+      border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:.95rem;
+      min-height:42px;padding:10px 14px;
+    }
+    .search-form-actions .btn-search{
+      background:var(--laranja);color:#fff;min-width:150px;
+    }
+    .search-form-actions .btn-clear{
+      background:#f1f1f1;color:var(--texto);border:1px solid var(--borda);min-width:150px;
+    }
+
+    .section{padding:64px 0;}
+    .section-title{text-align:center;margin-bottom:28px;}
+    #destaques{padding-bottom:20px;}
+    .about-section{padding-top:10px;}
+    .about-section .section-title{margin-bottom:12px;}
+    .section-title h2{font-size:2rem;color:var(--preto);margin-bottom:8px;}
+    .section-title p{color:#666;max-width:760px;margin:0 auto;}
+
+    .grid-cards{display:grid;grid-template-columns:repeat(3, 1fr);gap:20px;}
+    .card{border:1px solid var(--borda);border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 10px 26px rgba(0,0,0,.06);transition:.2s ease;}
+    .card:hover{transform:translateY(-3px);box-shadow:0 16px 32px rgba(0,0,0,.09);}
+    .card-img{position:relative;height:230px;overflow:hidden;background:#000;}
+    .card-img img{width:100%;height:100%;object-fit:cover;display:block;}
+    .card-tag{position:absolute;top:14px;left:14px;background:var(--laranja);color:#fff;padding:7px 10px;border-radius:999px;font-size:.8rem;font-weight:700;}
+    .card-body{padding:18px;}
+    .card-body h3{font-size:1.1rem;margin-bottom:8px;color:var(--preto);}
+    .price{color:var(--laranja);font-weight:700;font-size:1.35rem;margin-bottom:10px;}
+    .meta{color:#666;font-size:.95rem;margin-bottom:14px;}
+    .card-actions{display:flex;gap:10px;flex-wrap:wrap;}
+    .btn-dark,.btn-light,.btn-outline{padding:10px 14px;border-radius:10px;font-weight:700;font-size:.92rem;display:inline-flex;align-items:center;justify-content:center;}
+    .btn-dark{background:var(--preto);color:#fff;}
+    .btn-light{background:#fff;color:var(--preto);border:1px solid var(--borda);}
+    .btn-outline{border:1px solid var(--laranja);color:var(--laranja);background:#fff;}
+
+    .section-actions{display:flex;justify-content:flex-end;margin-top:18px;}
+    .search-results-section{padding-top:18px;}
+    .search-results-intro{margin-bottom:16px;text-align:center;color:#666;}
+    .empty-state{border:1px dashed var(--borda);border-radius:16px;padding:18px;background:#fff;color:#666;text-align:center;}
+
+    .about-section{background:linear-gradient(180deg, #fff 0%, #fafafa 100%);}
+    .about-box{border:1px solid var(--borda);border-radius:18px;padding:26px;background:#fff;box-shadow:0 10px 22px rgba(0,0,0,.05);}
+    .about-box p{color:#555;font-size:1rem;max-width:920px;}
+    #sobre{padding-bottom:18px;}
+
+    #servicos{padding-top:18px;padding-bottom:16px;}
+    .services-grid{display:grid;grid-template-columns:repeat(2, 1fr);gap:20px;}
+    .service{background:var(--cinza);border:1px solid var(--borda);border-radius:16px;padding:22px;min-height:180px;display:flex;flex-direction:column;}
+    .service h3{margin-bottom:10px;color:var(--preto);font-size:1.1rem;}
+    .service p{color:#555;font-size:.96rem;}
+    .service .service-actions{margin-top:auto;display:flex;justify-content:flex-end;padding-top:14px;}
+    .service .btn-saiba-mais{display:inline-flex;align-items:center;justify-content:center;background:var(--laranja);color:#fff;font-weight:700;font-size:.9rem;padding:9px 14px;border-radius:999px;box-shadow:0 8px 18px rgba(0,0,0,.12);}
+    .service .btn-saiba-mais:hover{filter:brightness(.97);}
+
+    .team-section{padding-top:6px;}
+    .team-grid{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:20px;}
+    .team-card{border:1px solid var(--borda);border-radius:18px;background:#fff;box-shadow:0 10px 26px rgba(0,0,0,.06);overflow:hidden;display:flex;flex-direction:column;min-height:100%;position:relative;}
+    .team-photo{aspect-ratio:1 / 1;min-height:220px;background:linear-gradient(135deg, #f7f7f7, #ececec);display:flex;align-items:center;justify-content:center;color:#888;font-weight:700;font-size:1rem;position:relative;text-align:center;padding:18px;}
+    .team-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+    .team-photo span{background:rgba(255,255,255,.78);border:1px dashed #d8d8d8;padding:10px 14px;border-radius:999px;}
+    .team-body{padding:18px 18px 64px;display:flex;flex-direction:column;gap:8px;}
+    .team-whatsapp{
+      position:absolute;right:14px;bottom:14px;z-index:2;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      min-width:52px;height:52px;padding:0 14px;border-radius:999px;
+      background:#25d366;color:#fff;font-weight:800;text-decoration:none;
+      box-shadow:0 10px 20px rgba(0,0,0,.18);border:2px solid rgba(255,255,255,.88);
+    }
+    .team-whatsapp img{width:22px;height:22px;display:block;}
+    .team-whatsapp span{display:none;}
+    .team-name{font-size:1.12rem;color:var(--preto);font-weight:700;line-height:1.25;}
+    .team-role{color:var(--laranja);font-weight:700;font-size:.92rem;}
+    .team-phone{color:#555;font-size:.96rem;}
+    .team-note{font-size:.92rem;color:#666;line-height:1.5;}
+
+    footer{background:var(--preto);color:#ddd;padding:22px 0 18px;margin-top:0;}
+    .footer-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:22px;align-items:stretch;}
+    .footer-col{display:flex;flex-direction:column;justify-content:flex-end;gap:10px;}
+    .footer-col:first-child{padding-left:90px;padding-bottom:18px;}
+    .footer-col:last-child{padding-bottom:18px;}
+    .footer-title{font-size:1rem;color:#fff;margin-bottom:6px;font-weight:700;}
+    .social-list,.contact-list{display:flex;flex-direction:column;gap:8px;}
+    .social-list a{color:#ddd;}
+    .social-list a:hover{color:var(--laranja);}
+    .contact-list span{display:block;}
+    .copyright{margin-top:8px;color:#bdbdbd;font-size:.92rem;}
+    #contato{padding-top:16px;}
+
+    .floating-whats{
+      position:fixed;right:18px;bottom:18px;z-index:80;
+      background:transparent;color:#fff;font-weight:700;
+      padding:0;border-radius:999px;box-shadow:0 16px 30px rgba(0,0,0,.22);
+      border:2px solid rgba(255,255,255,.24);
+    }
+    .floating-whats img{display:block;width:76px;height:76px;border-radius:50%;}
+    .floating-whats:hover{filter:brightness(.96);}
+
+    @media (max-width: 1024px){
+      .search-form{grid-template-columns:1fr 1fr;}
+      .grid-cards{grid-template-columns:1fr 1fr;}
+      .team-grid{grid-template-columns:1fr 1fr;}
+      .footer-grid{grid-template-columns:1fr;}
+      .footer-col:first-child{padding-left:0;}
+    }
+
+    @media (max-width: 720px){
+      header{position:sticky;}
+      .topbar{flex-direction:column;align-items:flex-start;}
+      nav{justify-content:flex-start;gap:10px 14px;}
+      .brand-copy strong{font-size:1.18rem;}
+      .hero{padding:44px 0 30px;}
+      .hero h1{font-size:2rem;margin-top:0;}
+      .search-card{padding:14px;border-radius:14px;}
+      .search-card h2{text-align:center;}
+      .search-form{grid-template-columns:1fr;}
+      .search-form .wide-2,.search-form .full{grid-column:auto;}
+      .search-form-actions{flex-direction:column;align-items:stretch;}
+      .search-form-actions button{width:100%;min-width:0;}
+      .price-range-box{grid-template-columns:1fr;}
+      .grid-cards,.services-grid,.team-grid{grid-template-columns:1fr;}
+      .section{padding:54px 0;}
+      .section-actions{justify-content:center;}
+      .floating-whats{right:14px;bottom:14px;padding:13px 16px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container topbar">
+      <a href="#inicio" class="brand" aria-label="Cléber Corretor">
+        <img class="logo-mark" src="assets/logo_site.png" alt="Logo Cléber Corretor" />
+        <div class="brand-copy">
+          <strong class="brand-name">Cléber Corretor</strong>
+          <span>O imóvel dos seus sonhos esta aqui!</span>
+        </div>
+      </a>
+
+      <nav aria-label="Menu principal">
+        <a href="#inicio">Início</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#contato">Contato</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1>Encontre o imóvel ideal em poucos cliques</h1>
+
+          <div class="search-card" aria-label="Buscar imóveis">
+            <h2>Buscar imóveis</h2>
+            <form class="search-form" id="searchForm">
+              <div class="search-field">
+                <label for="cidade">Cidade</label>
+                <select id="cidade">
+                  <option value="">Cidade</option>
+                </select>
+              </div>
+              <div class="search-field">
+                <label for="bairro">Bairro</label>
+                <select id="bairro" disabled>
+                  <option value="">Bairro</option>
+                </select>
+              </div>
+              <div class="search-field">
+                <label for="tipo">Tipo de imóvel</label>
+                <select id="tipo">
+                  <option value="">Tipo de imóvel</option>
+                </select>
+              </div>
+              <div class="search-field">
+                <label for="estado">Estado do imóvel</label>
+                <select id="estado">
+                  <option value="">Estado do imóvel</option>
+                  <option value="Novo">Novo</option>
+                  <option value="Usado">Usado</option>
+                </select>
+              </div>
+
+              <div class="search-field wide-2">
+                <label for="priceMin">Valor mínimo</label>
+                <input id="priceMin" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex: 300.000" />
+              </div>
+              <div class="search-field wide-2">
+                <label for="priceMax">Valor Máximo</label>
+                <input id="priceMax" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex: 320.000" />
+              </div>
+              <div class="search-field">
+                <label for="quartos">Quartos</label>
+                <input id="quartos" type="number" min="0" step="1" placeholder="Quantidade" />
+              </div>
+              <div class="search-field">
+                <label for="banheiro">Banheiro</label>
+                <input id="banheiro" type="number" min="0" step="1" placeholder="Quantidade" />
+              </div>
+              <div class="search-field">
+                <label for="suite">Suíte</label>
+                <input id="suite" type="number" min="0" step="1" placeholder="Quantidade" />
+              </div>
+              <div class="search-field">
+                <label for="garagem">Garagem</label>
+                <input id="garagem" type="number" min="0" step="1" placeholder="Quantidade" />
+              </div>
+              <div class="search-form-actions">
+                <button type="submit" class="btn-search">Buscar agora</button>
+                <button type="button" id="clearFilters" class="btn-clear">Limpar filtro</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section search-results-section" id="resultados-busca" hidden>
+      <div class="container">
+        <div class="section-title">
+          <h2>Resultados da busca</h2>
+          <p class="search-results-intro" id="searchResultsSubtitle">Preencha os campos acima e clique em buscar para ver os imóveis cadastrados.</p>
+        </div>
+        <div class="grid-cards" id="searchResultsGrid"></div>
+      </div>
+    </section>
+
+    <section class="section" id="destaques">
+      <div class="container">
+        <div class="section-title">
+          <h2>Imóveis em destaque</h2>
+        </div>
+
+        <div class="grid-cards">
+          <article class="card">
+            <div class="card-img">
+              <span class="card-tag">Venda</span>
+              <img src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=1200&q=80" alt="Casa moderna">
+            </div>
+            <div class="card-body">
+              <h3>Casa moderna no centro</h3>
+              <div class="price">R$ 450.000</div>
+              <div class="meta">3 quartos • 2 banheiros • 1 suíte</div>
+              <div class="card-actions">
+                <a href="#" class="btn-dark">Ver imóvel</a>
+                <a href="#" class="btn-light">Favoritar</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-img">
+              <span class="card-tag">Destaque</span>
+              <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80" alt="Apartamento">
+            </div>
+            <div class="card-body">
+              <h3>Apartamento com vista</h3>
+              <div class="price">R$ 320.000</div>
+              <div class="meta">2 quartos • varanda • garagem</div>
+              <div class="card-actions">
+                <a href="#" class="btn-dark">Ver imóvel</a>
+                <a href="#" class="btn-light">Favoritar</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-img">
+              <span class="card-tag">Novo</span>
+              <img src="https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1200&q=80" alt="Terreno">
+            </div>
+            <div class="card-body">
+              <h3>Terreno em ótima localização</h3>
+              <div class="price">R$ 180.000</div>
+              <div class="meta">450 m² • bairro valorizado</div>
+              <div class="card-actions">
+                <a href="#" class="btn-dark">Ver imóvel</a>
+                <a href="#" class="btn-light">Favoritar</a>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="section-actions">
+          <a href="destaques.html" class="btn-outline">Ver mais destaques</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section about-section" id="sobre">
+      <div class="container">
+        <div class="section-title">
+          <h2>Sobre</h2>
+        </div>
+        <div class="about-box">
+          <p>
+            A <strong class="brand-name">Cléber Corretor</strong> atua com foco total em <strong>venda de imóveis</strong>,
+            com atendimento direto, visual premium e uma experiência pensada para facilitar a busca
+            do imóvel certo com segurança e clareza.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="servicos">
+      <div class="container">
+        <div class="section-title">
+          <h2>Serviços</h2>
+        </div>
+        <div class="services-grid">
+          <div class="service">
+            <h3>Assessoria</h3>
+            <p>
+              Orientação completa para acompanhar o cliente na escolha do imóvel, com apoio comercial,
+              transparência e atendimento próximo.
+            </p>
+          </div>
+          <div class="service">
+            <h3>Pensando em construir o seu sonho?<br />Nós temos a solução.</h3>
+            <p>
+              Através do programa Minha casa minha vida da Caixa, você pode financiar o terreno e a construção.
+              Auxiliamos em todo o processo, desde a escolha do terreno até a finalização da obra.
+            </p>
+            <div class="service-actions">
+              <a class="btn-saiba-mais" href="financiamento.html">Saiba mais</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section team-section" id="contato">
+      <div class="container">
+        <div class="section-title">
+          <h2>Contato</h2>
+          <p>Não achou o que procura ou quer um atendimento personalizado? Fale com um de nossos corretores:</p>
+        </div>
+        <div class="team-grid" id="teamGrid">
+          <div class="empty-state" style="grid-column:1 / -1;">Carregando corretores...</div>
+        </div>
+        <div class="section-actions" id="teamActions" hidden>
+          <a href="corretores.html" class="btn-dark">Todos os Corretores</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <div class="footer-title">Mídias sociais</div>
+        <div class="social-list">
+          <a href="https://www.facebook.com/marketplace/profile/100049375820904/?ref=permalink&mibextid=dXMIcH" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;">Facebook</a>
+          <a href="https://www.instagram.com/clebercorretor080979?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;">Instagram</a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-title">Informações</div>
+        <div class="contact-list">
+          <span><strong>Endereço:</strong> Rua Professora Nair Pedrolina Martin, 56, Bairro Horizonte, Sapiranga</span>
+          <span><strong>Contato:</strong> (51) 99543-4370</span>
+          <span><strong>Copyright:</strong> © 2026 Cléber Corretor. Todos os direitos reservados.</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <a class="floating-whats" href="https://wa.me/5551995434370" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <img src="assets/whatsapp.png" alt="WhatsApp" />
+  </a>
+
+  <script src="config.js"></script>
+
+  <script>
+    (() => {
+      const API_BASE = window.CC_API_BASE || 'https://cadastro.codeflowsoluctions.com';
+      const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80';
+
+      const featuredGrid = document.querySelector('#destaques .grid-cards');
+      const searchForm = document.getElementById('searchForm');
+      const searchSection = document.getElementById('resultados-busca');
+      const searchGrid = document.getElementById('searchResultsGrid');
+      const searchSubtitle = document.getElementById('searchResultsSubtitle');
+      const teamGrid = document.getElementById('teamGrid');
+      const teamActions = document.getElementById('teamActions');
+      const tipoSelect = document.getElementById('tipo');
+      const cidadeSelect = document.getElementById('cidade');
+      const bairroSelect = document.getElementById('bairro');
+      const clearFiltersBtn = document.getElementById('clearFilters');
+      let bairrosPorCidade = {};
+
+      if (featuredGrid && !featuredGrid.id) featuredGrid.id = 'featuredGrid';
+
+      function esc(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function money(value) {
+        const number = Number(value);
+        if (!Number.isFinite(number)) return 'Sob consulta';
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(number);
+      }
+
+      function phoneText(value) {
+        const digits = String(value ?? '').replace(/\D/g, '');
+        if (!digits) return '-';
+        if (digits.length === 11) return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+        if (digits.length === 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+        return digits;
+      }
+
+      function whatsappLink(value) {
+        const digits = String(value ?? '').replace(/\D/g, '');
+        if (!digits) return '';
+        const normalized = digits.startsWith('55') ? digits : `55${digits}`;
+        return `https://wa.me/${normalized}`;
+      }
+
+      function teamMemberHtml(item) {
+        const nome = [item.nome, item.sobrenome].filter(Boolean).join(' ').trim() || 'Corretor';
+        const cargo = item.cargo_nome || item.cargo || 'Corretor';
+        const telefone = phoneText(item.telefone);
+        const initial = esc((item.nome || 'C').trim().charAt(0).toUpperCase() || 'C');
+        const foto = item.foto_url || '';
+        const whatsapp = whatsappLink(item.telefone);
+        return `
+          <article class="team-card">
+            <div class="team-photo" aria-label="Foto do corretor">
+              ${foto ? `<img src="${esc(foto)}" alt="Foto de ${esc(nome)}" loading="lazy">` : `<span>${initial}<br />Foto em breve</span>`}
+            </div>
+            <div class="team-body">
+              <div class="team-name">${esc(nome)}</div>
+              <div class="team-role">${esc(cargo)}</div>
+              <div class="team-phone">${esc(telefone)}</div>
+
+            </div>
+            ${whatsapp ? `<a class="team-whatsapp" href="${esc(whatsapp)}" target="_blank" rel="noopener" aria-label="Falar com ${esc(nome)} no WhatsApp"><img src="assets/whatsapp.png" alt="" aria-hidden="true"><span>WhatsApp</span></a>` : ''}
+          </article>
+        `;
+      }
+
+      function placeholderTeamHtml() {
+        return `
+          <article class="team-card">
+            <div class="team-photo" aria-label="Atendente do site">
+              <span>A<br />Atendente</span>
+            </div>
+            <div class="team-body">
+              <div class="team-name">Atendente</div>
+              <div class="team-role">Atendente</div>
+              <div class="team-phone">51 99543-4370</div>
+            </div>
+          </article>
+        `;
+      }
+
+      function floorText(item) {
+        const raw = item.numero_andares ?? item.quantidade_andares ?? item.numero_pavimentos ?? item.quantidade_pavimentos ?? item.qtd_andares ?? item.andares ?? item.andar;
+        const value = String(raw ?? '').trim();
+        if (!value) return '';
+        if (/^\d+(?:[.,]\d+)?$/.test(value)) {
+          const numeric = Number(value.replace(',', '.'));
+          if (Number.isFinite(numeric)) {
+            return `${numeric} ${numeric === 1 ? 'andar' : 'andares'}`;
+          }
+        }
+        return value;
+      }
+
+      function specsText(item) {
+        const parts = [];
+        if (item.numero_dormitorios) parts.push(`${item.numero_dormitorios} quartos`);
+        if (item.numero_banheiros) parts.push(`${item.numero_banheiros} banheiros`);
+        if (item.numero_suites) parts.push(`${item.numero_suites} suítes`);
+        if (item.numero_vagas_garagem) parts.push(`${item.numero_vagas_garagem} vagas`);
+        const floors = floorText(item);
+        if (floors) parts.push(floors);
+        return parts.length ? parts.join(' • ') : 'Informações sob consulta';
+      }
+
+      function cardHtml(item) {
+        const image = item.imagem || FALLBACK_IMAGE;
+        const title = item.titulo || item.codigo || 'Imóvel';
+        const location = [item.cidade, item.bairro].filter(Boolean).join(' • ') || 'Localização não informada';
+        const category = item.categoria_nome || item.categoria_slug || 'Imóvel';
+        const link = item.url || `imovel.html?codigo=${encodeURIComponent(item.codigo || '')}`;
+        return `
+          <article class="card">
+            <div class="card-img">
+              <span class="card-tag">${esc(category)}</span>
+              <img src="${esc(image)}" alt="${esc(title)}">
+            </div>
+            <div class="card-body">
+              <h3>${esc(title)}</h3>
+              <div class="price">${money(item.valor)}</div>
+              <div class="meta">${esc(location)}</div>
+              <div class="meta">${esc(specsText(item))}</div>
+              <div class="card-actions">
+                <a href="${esc(link)}" class="btn-dark">Ver imóvel</a>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function renderGrid(container, items, emptyText) {
+        if (!container) return;
+        const list = Array.isArray(items) ? items : [];
+        container.innerHTML = list.length
+          ? list.map(cardHtml).join('')
+          : `<div class="empty-state" style="grid-column:1 / -1;">${esc(emptyText)}</div>`;
+      }
+
+      async function apiGet(path) {
+        const response = await fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' } });
+        if (!response.ok) throw new Error(`Falha ao consultar ${path} (${response.status})`);
+        return response.json();
+      }
+
+      function currentFilters() {
+        const normalizeMoney = (value) => String(value ?? '').replace(/\D/g, '');
+        return {
+          cidade: cidadeSelect ? cidadeSelect.value.trim() : '',
+          bairro: bairroSelect ? bairroSelect.value.trim() : '',
+          categoria_slug: tipoSelect.value.trim(),
+          estado_imovel: document.getElementById('estado').value.trim(),
+          valor_min: normalizeMoney(document.getElementById('priceMin').value),
+          valor_max: normalizeMoney(document.getElementById('priceMax').value),
+          dormitorios: document.getElementById('quartos').value.trim(),
+          banheiros: document.getElementById('banheiro').value.trim(),
+          suites: document.getElementById('suite').value.trim(),
+          vagas: document.getElementById('garagem').value.trim(),
+        };
+      }
+
+      function hasAnyFilter(filters) {
+        return Object.values(filters).some((value) => String(value || '').trim() !== '');
+      }
+
+      function uniqueSorted(values) {
+        return Array.from(new Set((values || []).map((value) => String(value || '').trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+      }
+
+      function renderCidadeOptions(cidades) {
+        if (!cidadeSelect) return;
+        const current = cidadeSelect.value;
+        cidadeSelect.innerHTML = '<option value="">Cidade</option>' + uniqueSorted(cidades).map((cidade) => `<option value="${esc(cidade)}">${esc(cidade)}</option>`).join('');
+        if (current) cidadeSelect.value = current;
+      }
+
+      function renderBairroOptions(cidade) {
+        if (!bairroSelect) return;
+        const current = bairroSelect.value;
+        const allBairros = cidade ? (bairrosPorCidade[cidade] || []) : Object.values(bairrosPorCidade).flat();
+        bairroSelect.innerHTML = '<option value="">Bairro</option>' + uniqueSorted(allBairros).map((bairro) => `<option value="${esc(bairro)}">${esc(bairro)}</option>`).join('');
+        bairroSelect.disabled = false;
+        if (current) bairroSelect.value = current;
+      }
+
+      async function loadLocations() {
+        if (!cidadeSelect || !bairroSelect) return;
+        try {
+          const data = await apiGet('/api/public/localizacoes');
+          bairrosPorCidade = data && data.bairrosPorCidade ? data.bairrosPorCidade : {};
+          renderCidadeOptions(Array.isArray(data.cidades) ? data.cidades : []);
+          renderBairroOptions(cidadeSelect.value.trim());
+        } catch (error) {
+          console.error(error);
+          bairroSelect.disabled = true;
+        }
+      }
+
+      async function loadCategories() {
+        if (!tipoSelect) return;
+        try {
+          const data = await apiGet('/api/public/categorias');
+          const items = Array.isArray(data.items) ? data.items : [];
+          const current = tipoSelect.value;
+          tipoSelect.innerHTML = '<option value="">Tipo de imóvel</option>' + items.map((item) => `<option value="${esc(item.slug)}">${esc(item.nome_exibicao)}</option>`).join('');
+          if (current) tipoSelect.value = current;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      function handleCidadeChange() {
+        if (!cidadeSelect || !bairroSelect) return;
+        bairroSelect.value = '';
+        renderBairroOptions(cidadeSelect.value.trim());
+      }
+
+      function clearSearchFilters() {
+        if (searchForm) searchForm.reset();
+        if (cidadeSelect) cidadeSelect.value = '';
+        if (bairroSelect) {
+          bairroSelect.value = '';
+          bairroSelect.innerHTML = '<option value="">Bairro</option>';
+          bairroSelect.disabled = true;
+        }
+        if (tipoSelect) tipoSelect.value = '';
+        const estadoSelect = document.getElementById('estado');
+        const priceMin = document.getElementById('priceMin');
+        const priceMax = document.getElementById('priceMax');
+        const quartos = document.getElementById('quartos');
+        const banheiro = document.getElementById('banheiro');
+        const suite = document.getElementById('suite');
+        const garagem = document.getElementById('garagem');
+        if (estadoSelect) estadoSelect.value = '';
+        if (priceMin) priceMin.value = '';
+        if (priceMax) priceMax.value = '';
+        if (quartos) quartos.value = '';
+        if (banheiro) banheiro.value = '';
+        if (suite) suite.value = '';
+        if (garagem) garagem.value = '';
+        if (searchSubtitle) searchSubtitle.textContent = 'Preencha os campos acima e clique em buscar para ver os imóveis cadastrados.';
+        if (searchSection) searchSection.hidden = true;
+        if (searchGrid) searchGrid.innerHTML = '';
+      }
+
+      async function loadFeatured() {
+        if (!featuredGrid) return;
+        try {
+          const data = await apiGet('/api/public/imoveis/destaque?limite=3');
+          renderGrid(featuredGrid, data.items || [], 'Ainda não há imóveis em destaque cadastrados.');
+        } catch (error) {
+          console.error(error);
+          renderGrid(featuredGrid, [], 'Não foi possível carregar os destaques agora.');
+        }
+      }
+
+      async function loadTeam() {
+        if (!teamGrid) return;
+        try {
+          const data = await apiGet('/api/public/funcionarios');
+          const items = Array.isArray(data.items) ? data.items : [];
+          const visibleItems = items.slice(0, 3);
+          teamGrid.innerHTML = visibleItems.length
+            ? visibleItems.map(teamMemberHtml).join('')
+            : placeholderTeamHtml();
+          if (teamActions) {
+            const showTeamActions = items.length > 3;
+            teamActions.hidden = !showTeamActions;
+            teamActions.style.display = showTeamActions ? 'flex' : 'none';
+          }
+        } catch (error) {
+          console.error(error);
+          teamGrid.innerHTML = '<div class="empty-state" style="grid-column:1 / -1;">Não foi possível carregar os corretores agora.</div>';
+          if (teamActions) {
+            teamActions.hidden = true;
+            teamActions.style.display = 'none';
+          }
+        }
+      }
+
+      async function runSearch(event) {
+        event.preventDefault();
+        const filters = currentFilters();
+        if (!hasAnyFilter(filters)) {
+          if (searchSection) searchSection.hidden = false;
+          if (searchSubtitle) searchSubtitle.textContent = 'Escolha ao menos um filtro para pesquisar.';
+          renderGrid(searchGrid, [], 'Escolha um filtro acima para começar a busca.');
+          if (searchSection) searchSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+
+        const params = new URLSearchParams(filters);
+        if (searchSection) searchSection.hidden = false;
+        if (searchSubtitle) searchSubtitle.textContent = 'Buscando imóveis compatíveis...';
+        renderGrid(searchGrid, [], 'Buscando imóveis compatíveis...');
+        if (searchSection) searchSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        try {
+          const data = await apiGet(`/api/public/imoveis/pesquisa?${params.toString()}`);
+          const total = Number(data.total || 0);
+          if (searchSubtitle) {
+            searchSubtitle.textContent = total ? `${total} imóvel(is) encontrado(s).` : 'Nenhum imóvel encontrado com esses filtros.';
+          }
+          renderGrid(searchGrid, data.items || [], 'Nenhum imóvel encontrado com esses filtros.');
+        } catch (error) {
+          console.error(error);
+          if (searchSubtitle) searchSubtitle.textContent = 'Erro ao consultar os imóveis. Tente novamente em instantes.';
+          renderGrid(searchGrid, [], 'Erro ao consultar os imóveis.');
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        if (searchForm) searchForm.addEventListener('submit', runSearch);
+        if (clearFiltersBtn) clearFiltersBtn.addEventListener('click', clearSearchFilters);
+        if (cidadeSelect) cidadeSelect.addEventListener('change', handleCidadeChange);
+        loadLocations();
+        loadCategories();
+        loadFeatured();
+        loadTeam();
+      });
+    })();
+  </script>
+</body>
+</html>
