@@ -89,3 +89,20 @@ Assim o site pode trocar a base da API (dominio do painel corretor center) sem e
 
 Este site **não** possui banco próprio.
 Ele depende apenas da API pública do `corretorcenter-mobile`. (dominio do painel: painel.seuDominio.com)
+
+## Reset do site
+
+Use este reset apenas para reinstalação limpa do site.
+
+### Uso normal
+Saia da pasta do projeto e execute:
+```bash
+cd ..
+bash cleber-corretor-site/scripts/reset-install.sh
+```
+
+### Uso sem confirmação interativa
+```bash
+cd ..
+bash cleber-corretor-site/scripts/reset-install.sh --yes
+```
