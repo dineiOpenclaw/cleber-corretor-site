@@ -599,11 +599,7 @@
           : absoluteLink;
         const text = `${title} - ${shareLink}`;
         const wa = `https://wa.me/?text=${encodeURIComponent(text)}`;
-        const sep = shareLink.includes('?') ? '&' : '?';
-        const fbTarget = safeCodigo
-          ? `${shareLink}&fbrefresh=${Date.now()}`
-          : `${shareLink}${sep}fbrefresh=${Date.now()}`;
-        const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fbTarget)}`;
+        const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink)}`;
         return `
           <details class="share-menu">
             <summary class="btn-outline">Compartilhar</summary>

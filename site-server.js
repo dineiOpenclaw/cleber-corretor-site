@@ -145,6 +145,14 @@ function sharePreviewHtml({ title, description, image, pageUrl, shareUrl }) {
 </html>`;
 }
 
+function homePreviewHtml({ origin }) {
+  const pageUrl = `${origin}/`;
+  const image = `${origin}/assets/banner-home.webp`;
+  const title = SITE_NAME;
+  const description = 'Confira imóveis e oportunidades.';
+  return sharePreviewHtml({ title, description, image, pageUrl, shareUrl: pageUrl });
+}
+
 function isPreviewCrawler(userAgent) {
   const ua = String(userAgent || '').toLowerCase();
   if (!ua) return false;
@@ -164,6 +172,13 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/config.js') {
       return send(res, 200, configScript({ requestOrigin, requestProto }), {
         'Content-Type': 'application/javascript; charset=utf-8',
+        'Cache-Control': 'no-store, max-age=0',
+      });
+    }
+
+    if (pathname === '/index.html' && isPreviewCrawler(req.headers['user-agent'])) {
+      return send(res, 200, homePreviewHtml({ origin: requestOrigin }), {
+        'Content-Type': 'text/html; charset=utf-8',
         'Cache-Control': 'no-store, max-age=0',
       });
     }
