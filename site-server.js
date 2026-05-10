@@ -49,10 +49,26 @@ function safeJoin(root, requestPath) {
   return absolute;
 }
 
-function configScript() {
+function normalizeBaseForRequest(rawBase, requestProto) {
+  const value = String(rawBase || '').trim();
+  if (!value) return value;
+  try {
+    const parsed = new URL(value);
+    if (requestProto === 'https' && parsed.protocol === 'http:') {
+      parsed.protocol = 'https:';
+    }
+    return parsed.toString().replace(/\/$/, '');
+  } catch {
+    return value;
+  }
+}
+
+function configScript({ requestOrigin, requestProto }) {
+  const normalizedSiteOrigin = normalizeBaseForRequest(SITE_ORIGIN, requestProto) || requestOrigin;
+  const normalizedApiBase = normalizeBaseForRequest(API_BASE, requestProto) || requestOrigin;
   return [
-    `window.CC_SITE_ORIGIN = ${JSON.stringify(SITE_ORIGIN)};`,
-    `window.CC_API_BASE = ${JSON.stringify(API_BASE)};`,
+    `window.CC_SITE_ORIGIN = ${JSON.stringify(normalizedSiteOrigin)};`,
+    `window.CC_API_BASE = ${JSON.stringify(normalizedApiBase)};`,
     `window.CC_SITE_NAME = ${JSON.stringify(SITE_NAME)};`,
     '',
   ].join('\n');
@@ -146,7 +162,7 @@ const server = http.createServer(async (req, res) => {
     const pathname = url.pathname === '/' ? '/index.html' : decodeURIComponent(url.pathname);
 
     if (pathname === '/config.js') {
-      return send(res, 200, configScript(), {
+      return send(res, 200, configScript({ requestOrigin, requestProto }), {
         'Content-Type': 'application/javascript; charset=utf-8',
         'Cache-Control': 'no-store, max-age=0',
       });
@@ -169,7 +185,8 @@ const server = http.createServer(async (req, res) => {
       }
 
       try {
-        const upstream = new URL(`${API_BASE}/api/public/imoveis/${encodeURIComponent(codigo)}`);
+        const apiBaseForRequest = normalizeBaseForRequest(API_BASE, requestProto) || API_BASE;
+        const upstream = new URL(`${apiBaseForRequest}/api/public/imoveis/${encodeURIComponent(codigo)}`);
         const payload = await fetchJson(upstream);
         const item = payload && payload.item ? payload.item : payload;
 
@@ -180,7 +197,7 @@ const server = http.createServer(async (req, res) => {
         const description = [city, district, price].filter(Boolean).join(' • ') || 'Veja detalhes deste imóvel';
 
         const apiOrigin = (() => {
-          try { return new URL(API_BASE).origin; } catch { return requestOrigin; }
+          try { return new URL(apiBaseForRequest).origin; } catch { return requestOrigin; }
         })();
         const fotoPrincipal = Array.isArray(item?.fotos) && item.fotos.length
           ? (item.fotos.find((f) => Number(f?.ordem) === 1)?.url || item.fotos[0]?.url)
@@ -202,7 +219,8 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (pathname.startsWith('/api/')) {
-      const upstream = new URL(`${API_BASE}${pathname}${url.search || ''}`);
+      const apiBaseForRequest = normalizeBaseForRequest(API_BASE, requestProto) || API_BASE;
+      const upstream = new URL(`${apiBaseForRequest}${pathname}${url.search || ''}`);
       const client = upstream.protocol === 'https:' ? https : http;
 
       return client.get(upstream, (upstreamRes) => {
