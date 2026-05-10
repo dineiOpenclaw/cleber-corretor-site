@@ -124,9 +124,15 @@ function sharePreviewHtml({ title, description, image, pageUrl, shareUrl }) {
   <meta name="twitter:image" content="${escHtml(image)}">
 </head>
 <body>
-  <p>Abrir imóvel: <a href="${escHtml(pageUrl)}">Clique aqui</a>.</p>
+  <p>Abrindo imóvel...</p>
 </body>
 </html>`;
+}
+
+function isPreviewCrawler(userAgent) {
+  const ua = String(userAgent || '').toLowerCase();
+  if (!ua) return false;
+  return /(facebookexternalhit|facebot|whatsapp|twitterbot|linkedinbot|slackbot|discordbot|telegrambot|skypeuripreview|googlebot)/i.test(ua);
 }
 
 const server = http.createServer(async (req, res) => {
@@ -156,6 +162,11 @@ const server = http.createServer(async (req, res) => {
       const pageUrl = `${requestOrigin}/imovel.html?codigo=${safeCodigo}`;
       const shareUrl = `${requestOrigin}${url.pathname}${url.search}`;
       const fallbackImage = `${requestOrigin}/assets/banner-home.webp`;
+      const crawler = isPreviewCrawler(req.headers['user-agent']);
+
+      if (!crawler) {
+        return send(res, 302, '', { Location: pageUrl, 'Cache-Control': 'no-store, max-age=0' });
+      }
 
       try {
         const upstream = new URL(`${API_BASE}/api/public/imoveis/${encodeURIComponent(codigo)}`);
