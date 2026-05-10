@@ -1,4 +1,5 @@
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
@@ -57,15 +58,157 @@ function configScript() {
   ].join('\n');
 }
 
+function escHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function fetchJson(url) {
+  return new Promise((resolve, reject) => {
+    const client = url.protocol === 'https:' ? https : http;
+    client
+      .get(url, (upstreamRes) => {
+        const chunks = [];
+        upstreamRes.on('data', (chunk) => chunks.push(chunk));
+        upstreamRes.on('end', () => {
+          const body = Buffer.concat(chunks).toString('utf-8');
+          if ((upstreamRes.statusCode || 500) >= 400) {
+            return reject(new Error(`upstream status ${upstreamRes.statusCode || 500}`));
+          }
+          try {
+            resolve(JSON.parse(body));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      })
+      .on('error', reject);
+  });
+}
+
+function toAbsoluteUrl(raw, baseUrl) {
+  const value = String(raw || '').trim();
+  if (!value) return '';
+  try {
+    return new URL(value, baseUrl).toString();
+  } catch {
+    return value;
+  }
+}
+
+function sharePreviewHtml({ title, description, image, pageUrl, shareUrl }) {
+  return `<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>${escHtml(title)}</title>
+  <meta name="description" content="${escHtml(description)}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="${escHtml(SITE_NAME)}">
+  <meta property="og:title" content="${escHtml(title)}">
+  <meta property="og:description" content="${escHtml(description)}">
+  <meta property="og:image" content="${escHtml(image)}">
+  <meta property="og:image:secure_url" content="${escHtml(image)}">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="${escHtml(shareUrl || pageUrl)}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escHtml(title)}">
+  <meta name="twitter:description" content="${escHtml(description)}">
+  <meta name="twitter:image" content="${escHtml(image)}">
+</head>
+<body>
+  <p>Abrir imóvel: <a href="${escHtml(pageUrl)}">Clique aqui</a>.</p>
+</body>
+</html>`;
+}
+
 const server = http.createServer(async (req, res) => {
   try {
-    const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
+    const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
+    const requestProto = forwardedProto || 'http';
+    const requestHost = req.headers.host || 'localhost';
+    const requestOrigin = `${requestProto}://${requestHost}`;
+
+    const url = new URL(req.url || '/', requestOrigin);
     const pathname = url.pathname === '/' ? '/index.html' : decodeURIComponent(url.pathname);
 
     if (pathname === '/config.js') {
       return send(res, 200, configScript(), {
         'Content-Type': 'application/javascript; charset=utf-8',
         'Cache-Control': 'no-store, max-age=0',
+      });
+    }
+
+    if (pathname === '/share/imovel') {
+      const codigo = String(url.searchParams.get('codigo') || '').trim();
+      if (!codigo) {
+        return send(res, 302, '', { Location: '/index.html' });
+      }
+
+      const safeCodigo = encodeURIComponent(codigo);
+      const pageUrl = `${requestOrigin}/imovel.html?codigo=${safeCodigo}`;
+      const shareUrl = `${requestOrigin}${url.pathname}${url.search}`;
+      const fallbackImage = `${requestOrigin}/assets/banner-home.webp`;
+
+      try {
+        const upstream = new URL(`${API_BASE}/api/public/imoveis/${encodeURIComponent(codigo)}`);
+        const payload = await fetchJson(upstream);
+        const item = payload && payload.item ? payload.item : payload;
+
+        const title = item?.titulo || `Imóvel ${codigo}`;
+        const city = item?.cidade || '';
+        const district = item?.bairro || '';
+        const price = item?.valor ? `R$ ${Number(item.valor).toLocaleString('pt-BR')}` : '';
+        const description = [city, district, price].filter(Boolean).join(' • ') || 'Veja detalhes deste imóvel';
+
+        const apiOrigin = (() => {
+          try { return new URL(API_BASE).origin; } catch { return requestOrigin; }
+        })();
+        const fotoPrincipal = Array.isArray(item?.fotos) && item.fotos.length
+          ? (item.fotos.find((f) => Number(f?.ordem) === 1)?.url || item.fotos[0]?.url)
+          : '';
+        const image = toAbsoluteUrl(item?.imagem || fotoPrincipal || '', apiOrigin) || fallbackImage;
+
+        return send(res, 200, sharePreviewHtml({ title, description, image, pageUrl, shareUrl }), {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-store, max-age=0',
+        });
+      } catch (error) {
+        const title = `Imóvel ${codigo}`;
+        const description = 'Veja detalhes deste imóvel';
+        return send(res, 200, sharePreviewHtml({ title, description, image: fallbackImage, pageUrl, shareUrl }), {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-store, max-age=0',
+        });
+      }
+    }
+
+    if (pathname.startsWith('/api/')) {
+      const upstream = new URL(`${API_BASE}${pathname}${url.search || ''}`);
+      const client = upstream.protocol === 'https:' ? https : http;
+
+      return client.get(upstream, (upstreamRes) => {
+        const chunks = [];
+        upstreamRes.on('data', (chunk) => chunks.push(chunk));
+        upstreamRes.on('end', () => {
+          const body = Buffer.concat(chunks);
+          res.writeHead(upstreamRes.statusCode || 502, {
+            'Content-Type': upstreamRes.headers['content-type'] || 'application/json; charset=utf-8',
+            'Cache-Control': 'no-store',
+          });
+          res.end(body);
+        });
+      }).on('error', (error) => {
+        return send(res, 502, JSON.stringify({ error: 'upstream_unavailable', detail: error.message }), {
+          'Content-Type': 'application/json; charset=utf-8',
+        });
       });
     }
 

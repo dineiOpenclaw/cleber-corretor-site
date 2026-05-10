@@ -105,7 +105,8 @@
     .section-title p{color:#666;max-width:760px;margin:0 auto;}
 
     .grid-cards{display:grid;grid-template-columns:repeat(3, 1fr);gap:20px;}
-    .card{border:1px solid var(--borda);border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 10px 26px rgba(0,0,0,.06);transition:.2s ease;}
+    .card{position:relative;z-index:1;border:1px solid var(--borda);border-radius:18px;overflow:visible;background:#fff;box-shadow:0 10px 26px rgba(0,0,0,.06);transition:.2s ease;}
+    .card.card-share-open{z-index:30;}
     .card:hover{transform:translateY(-3px);box-shadow:0 16px 32px rgba(0,0,0,.09);}
     .card-img{position:relative;height:230px;overflow:hidden;background:#000;}
     .card-img img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -119,6 +120,12 @@
     .btn-dark{background:var(--preto);color:#fff;}
     .btn-light{background:#fff;color:var(--preto);border:1px solid var(--borda);}
     .btn-outline{border:1px solid var(--laranja);color:var(--laranja);background:#fff;}
+    .share-menu{position:relative;display:inline-flex;}
+    .share-menu > summary{list-style:none;cursor:pointer;}
+    .share-menu > summary::-webkit-details-marker{display:none;}
+    .share-options{position:absolute;right:0;top:calc(100% + 6px);z-index:8;min-width:210px;background:#fff;border:1px solid var(--borda);border-radius:12px;box-shadow:0 10px 22px rgba(0,0,0,.12);padding:8px;display:grid;gap:6px;}
+    .share-options a,.share-options button{appearance:none;border:1px solid #ececec;background:#fff;color:var(--preto);text-align:left;border-radius:9px;padding:8px 10px;font-size:.86rem;cursor:pointer;}
+    .share-options a:hover,.share-options button:hover{background:#fafafa;}
 
     .section-actions{display:flex;justify-content:flex-end;margin-top:18px;}
     .search-results-section{padding-top:18px;}
@@ -458,7 +465,11 @@
 
   <script>
     (() => {
-      const API_BASE = window.CC_API_BASE || 'https://cadastro.codeflowsoluctions.com';
+      const API_BASES = Array.from(new Set([
+        `${window.location.origin}`,
+        window.CC_API_BASE,
+        'https://cadastro.codeflowsoluctions.com'
+      ].filter(Boolean)));
       const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80';
 
       const featuredGrid = document.querySelector('#destaques .grid-cards');
@@ -568,6 +579,43 @@
         return parts.length ? parts.join(' • ') : 'Informações sob consulta';
       }
 
+      function toAbsoluteLink(link) {
+        const raw = String(link || '').trim();
+        if (!raw) return window.location.href;
+        try {
+          return new URL(raw, window.location.href).toString();
+        } catch (_) {
+          if (/^https?:\/\//i.test(raw)) return raw;
+          const normalized = raw.startsWith('/') ? raw : `/${raw}`;
+          return `${window.location.origin}${normalized}`;
+        }
+      }
+
+      function shareActionsHtml(link, title, codigo) {
+        const absoluteLink = toAbsoluteLink(link);
+        const safeCodigo = String(codigo || '').trim();
+        const shareLink = safeCodigo
+          ? `${window.location.origin}/share/imovel?codigo=${encodeURIComponent(codigo)}`
+          : absoluteLink;
+        const text = `${title} - ${shareLink}`;
+        const wa = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        const sep = shareLink.includes('?') ? '&' : '?';
+        const fbTarget = safeCodigo
+          ? `${shareLink}&fbrefresh=${Date.now()}`
+          : `${shareLink}${sep}fbrefresh=${Date.now()}`;
+        const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fbTarget)}`;
+        return `
+          <details class="share-menu">
+            <summary class="btn-outline">Compartilhar</summary>
+            <div class="share-options">
+              <a href="${esc(wa)}" target="_blank" rel="noopener">WhatsApp</a>
+              <a href="${esc(fb)}" target="_blank" rel="noopener">Facebook</a>
+              <button type="button" data-copy-link="${esc(shareLink)}">Copiar link</button>
+            </div>
+          </details>
+        `;
+      }
+
       function cardHtml(item) {
         const image = item.imagem || FALLBACK_IMAGE;
         const title = item.titulo || item.codigo || 'Imóvel';
@@ -587,6 +635,7 @@
               <div class="meta">${esc(specsText(item))}</div>
               <div class="card-actions">
                 <a href="${esc(link)}" class="btn-dark">Ver imóvel</a>
+                ${shareActionsHtml(link, title, item.codigo)}
               </div>
             </div>
           </article>
@@ -601,10 +650,64 @@
           : `<div class="empty-state" style="grid-column:1 / -1;">${esc(emptyText)}</div>`;
       }
 
+      document.addEventListener('toggle', (event) => {
+        const menu = event.target.closest('details.share-menu');
+        if (!menu) return;
+
+        const card = menu.closest('.card');
+        if (card) {
+          card.classList.toggle('card-share-open', menu.open);
+        }
+
+        if (menu.open) {
+          document.querySelectorAll('details.share-menu[open]').forEach((other) => {
+            if (other !== menu) {
+              other.open = false;
+              const otherCard = other.closest('.card');
+              if (otherCard) otherCard.classList.remove('card-share-open');
+            }
+          });
+        }
+      }, true);
+
+      document.addEventListener('click', async (event) => {
+        const shareAction = event.target.closest('.share-options a, .share-options button');
+        if (shareAction) {
+          const menu = shareAction.closest('details.share-menu');
+          if (menu) {
+            menu.open = false;
+            const card = menu.closest('.card');
+            if (card) card.classList.remove('card-share-open');
+          }
+        }
+
+        const button = event.target.closest('[data-copy-link]');
+        if (!button) return;
+        const link = button.getAttribute('data-copy-link') || '';
+        if (!link) return;
+        try {
+          await navigator.clipboard.writeText(link);
+          button.textContent = 'Link copiado';
+          setTimeout(() => { button.textContent = 'Copiar link'; }, 1400);
+        } catch (_) {
+          window.prompt('Copie o link:', link);
+        }
+      });
+
       async function apiGet(path) {
-        const response = await fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' } });
-        if (!response.ok) throw new Error(`Falha ao consultar ${path} (${response.status})`);
-        return response.json();
+        let lastError = null;
+
+        for (const base of API_BASES) {
+          try {
+            const response = await fetch(`${base}${path}`, { headers: { Accept: 'application/json' } });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+          } catch (error) {
+            lastError = `${base} -> ${error && error.message ? error.message : 'Falha de rede'}`;
+          }
+        }
+
+        throw new Error(`Falha ao consultar ${path} (${lastError || 'sem resposta'})`);
       }
 
       function currentFilters() {

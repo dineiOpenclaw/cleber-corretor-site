@@ -64,6 +64,12 @@
     .btn-dark{background:var(--preto);color:#fff;}
     .btn-light{background:#fff;color:var(--preto);border:1px solid var(--borda);}
     .btn-outline{border:1px solid var(--laranja);color:var(--laranja);background:#fff;}
+    .share-menu{position:relative;display:inline-flex;}
+    .share-menu > summary{list-style:none;cursor:pointer;}
+    .share-menu > summary::-webkit-details-marker{display:none;}
+    .share-options{position:absolute;right:0;top:calc(100% + 6px);z-index:12;min-width:210px;background:#fff;border:1px solid var(--borda);border-radius:12px;box-shadow:0 10px 22px rgba(0,0,0,.12);padding:8px;display:grid;gap:6px;}
+    .share-options a,.share-options button{appearance:none;border:1px solid #ececec;background:#fff;color:var(--preto);text-align:left;border-radius:9px;padding:8px 10px;font-size:.86rem;cursor:pointer;}
+    .share-options a:hover,.share-options button:hover{background:#fafafa;}
     .content-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);gap:22px;align-items:start;}
     .panel{border:1px solid var(--borda);border-radius:18px;background:#fff;box-shadow:0 12px 26px rgba(0,0,0,.05);padding:20px;}
     .panel h3{font-size:1.2rem;color:var(--preto);margin-bottom:12px;}
@@ -287,6 +293,26 @@
         `;
       }
 
+      function shareActionsHtml(codigo, title) {
+        const safeCodigo = String(codigo || '').trim();
+        if (!safeCodigo) return '';
+        const shareLink = `${window.location.origin}/share/imovel?codigo=${encodeURIComponent(safeCodigo)}`;
+        const text = `${title} - ${shareLink}`;
+        const wa = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        const fbTarget = `${shareLink}&fbrefresh=${Date.now()}`;
+        const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fbTarget)}`;
+        return `
+          <details class="share-menu">
+            <summary class="btn-light">Compartilhar</summary>
+            <div class="share-options">
+              <a href="${esc(wa)}" target="_blank" rel="noopener">WhatsApp</a>
+              <a href="${esc(fb)}" target="_blank" rel="noopener">Facebook</a>
+              <button type="button" data-copy-link="${esc(shareLink)}">Copiar link</button>
+            </div>
+          </details>
+        `;
+      }
+
       function detailCards(item) {
         return `
           <div class="specs">
@@ -301,6 +327,7 @@
           </div>
           <div class="actions">
             <button type="button" class="btn-outline js-back-results">Voltar aos resultados</button>
+            ${shareActionsHtml(item.codigo || '', item.titulo || item.codigo || 'Imóvel')}
           </div>
         `;
       }
@@ -357,6 +384,7 @@
               <div class="area-text">${esc(areaText(areaTotal, areaConstruida))}</div>
               <div class="actions">
                 <button type="button" class="btn-outline js-back-results">Voltar aos resultados</button>
+                ${shareActionsHtml(item.codigo || '', item.titulo || item.codigo || 'Imóvel')}
               </div>
             </div>
           </div>
@@ -372,6 +400,7 @@
             window.location.href = 'index.html#resultados-busca';
           });
         });
+
 
         const galleryMain = document.getElementById('galleryMainImage');
         const galleryPrev = document.getElementById('galleryPrev');
@@ -426,6 +455,28 @@
           updateGallery();
         }
       }
+
+      document.addEventListener('click', (event) => {
+        const shareAction = event.target.closest('.share-options a, .share-options button');
+        if (shareAction) {
+          const menu = shareAction.closest('details.share-menu');
+          if (menu) menu.open = false;
+        }
+
+        const button = event.target.closest('[data-copy-link]');
+        if (!button) return;
+        const link = button.getAttribute('data-copy-link') || '';
+        if (!link) return;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(link).catch(() => {
+            window.prompt('Copie o link:', link);
+          });
+          return;
+        }
+
+        window.prompt('Copie o link:', link);
+      });
 
       async function init() {
         const params = new URLSearchParams(window.location.search);

@@ -32,8 +32,10 @@
     .section-title{text-align:center;margin-bottom:22px;}
     .section-title h2{font-size:2rem;color:var(--preto);margin-bottom:8px;}
     .section-title p{color:#666;max-width:760px;margin:0 auto;}
-    .grid-cards{display:grid;grid-template-columns:repeat(3, 1fr);gap:20px;}
-    .card{border:1px solid var(--borda);border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 10px 26px rgba(0,0,0,.06);transition:.2s ease;}
+    .grid-cards{display:grid;grid-template-columns:repeat(3, 1fr);gap:20px;position:relative;z-index:1;}
+    .card{border:1px solid var(--borda);border-radius:18px;overflow:visible;background:#fff;box-shadow:0 10px 26px rgba(0,0,0,.06);transition:.2s ease;position:relative;z-index:1;}
+    .card.card-share-open{z-index:120;}
+    .card:has(details.share-menu[open]){z-index:120;}
     .card:hover{transform:translateY(-3px);box-shadow:0 16px 32px rgba(0,0,0,.09);}
     .card-img{position:relative;height:230px;overflow:hidden;background:#000;}
     .card-img img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -43,9 +45,16 @@
     .price{color:var(--laranja);font-weight:700;font-size:1.35rem;margin-bottom:10px;}
     .meta{color:#666;font-size:.95rem;margin-bottom:14px;}
     .card-actions{display:flex;gap:10px;flex-wrap:wrap;}
-    .btn-dark,.btn-light{padding:10px 14px;border-radius:10px;font-weight:700;font-size:.92rem;display:inline-flex;align-items:center;justify-content:center;}
+    .btn-dark,.btn-light,.btn-outline{padding:10px 14px;border-radius:10px;font-weight:700;font-size:.92rem;display:inline-flex;align-items:center;justify-content:center;}
     .btn-dark{background:var(--preto);color:#fff;}
     .btn-light{background:#fff;color:var(--preto);border:1px solid var(--borda);}
+    .btn-outline{border:1px solid var(--laranja);color:var(--laranja);background:#fff;}
+    .share-menu{position:relative;display:inline-flex;}
+    .share-menu > summary{list-style:none;cursor:pointer;}
+    .share-menu > summary::-webkit-details-marker{display:none;}
+    .share-options{position:absolute;right:0;top:calc(100% + 6px);z-index:9999;min-width:210px;background:#fff;border:1px solid var(--borda);border-radius:12px;box-shadow:0 10px 22px rgba(0,0,0,.12);padding:8px;display:grid;gap:6px;}
+    .share-options a,.share-options button{appearance:none;border:1px solid #ececec;background:#fff;color:var(--preto);text-align:left;border-radius:9px;padding:8px 10px;font-size:.86rem;cursor:pointer;}
+    .share-options a:hover,.share-options button:hover{background:#fafafa;}
     .empty-state{border:1px dashed var(--borda);border-radius:16px;padding:18px;background:#fff;color:#666;text-align:center;}
     footer{background:var(--preto);color:#ddd;padding:22px 0 18px;margin-top:0;}
     .footer-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:22px;align-items:stretch;}
@@ -191,6 +200,26 @@
           });
       }
 
+      function shareActionsHtml(codigo, title) {
+        const safeCodigo = String(codigo || '').trim();
+        if (!safeCodigo) return '';
+        const shareLink = `${window.location.origin}/share/imovel?codigo=${encodeURIComponent(safeCodigo)}`;
+        const text = `${title} - ${shareLink}`;
+        const wa = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        const fbTarget = `${shareLink}&fbrefresh=${Date.now()}`;
+        const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fbTarget)}`;
+        return `
+          <details class="share-menu">
+            <summary class="btn-outline">Compartilhar</summary>
+            <div class="share-options">
+              <a href="${esc(wa)}" target="_blank" rel="noopener">WhatsApp</a>
+              <a href="${esc(fb)}" target="_blank" rel="noopener">Facebook</a>
+              <button type="button" data-copy-link="${esc(shareLink)}">Copiar link</button>
+            </div>
+          </details>
+        `;
+      }
+
       function cardHtml(item) {
         const image = item.imagem || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80';
         const title = item.titulo || item.codigo || 'Imóvel';
@@ -210,6 +239,7 @@
               <div class="meta">${esc(specsText(item))}</div>
               <div class="card-actions">
                 <a href="${esc(link)}" class="btn-dark">Ver imóvel</a>
+                ${shareActionsHtml(item.codigo || '', title)}
                 <a href="index.html#inicio" class="btn-light">Voltar</a>
               </div>
             </div>
@@ -232,6 +262,61 @@
           featuredGrid.innerHTML = '<div class="empty-state" style="grid-column:1 / -1;">Não foi possível carregar os destaques agora.</div>';
         }
       }
+
+      document.addEventListener('toggle', (event) => {
+        const menu = event.target.closest('details.share-menu');
+        if (!menu) return;
+
+        const card = menu.closest('.card');
+        if (card) {
+          card.classList.toggle('card-share-open', menu.open);
+        }
+
+        if (menu.open) {
+          document.querySelectorAll('details.share-menu[open]').forEach((other) => {
+            if (other !== menu) {
+              other.open = false;
+              const otherCard = other.closest('.card');
+              if (otherCard) otherCard.classList.remove('card-share-open');
+            }
+          });
+        }
+      });
+
+      document.addEventListener('click', (event) => {
+        const summary = event.target.closest('details.share-menu > summary');
+        if (summary) {
+          const menu = summary.parentElement;
+          const card = menu?.closest('.card');
+          if (card) {
+            setTimeout(() => card.classList.toggle('card-share-open', Boolean(menu?.open)), 0);
+          }
+        }
+
+        const shareAction = event.target.closest('.share-options a, .share-options button');
+        if (shareAction) {
+          const menu = shareAction.closest('details.share-menu');
+          if (menu) {
+            menu.open = false;
+            const card = menu.closest('.card');
+            if (card) card.classList.remove('card-share-open');
+          }
+        }
+
+        const button = event.target.closest('[data-copy-link]');
+        if (!button) return;
+        const link = button.getAttribute('data-copy-link') || '';
+        if (!link) return;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(link).catch(() => {
+            window.prompt('Copie o link:', link);
+          });
+          return;
+        }
+
+        window.prompt('Copie o link:', link);
+      });
 
       loadFeatured();
     })();
